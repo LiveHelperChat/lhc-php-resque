@@ -1,6 +1,3 @@
-# lhc-php-resque
-Enables php-resque functionality in Live Helper Chat
-
 Requirements
 
 LHC 2.52v
