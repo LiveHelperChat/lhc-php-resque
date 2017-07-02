@@ -25,7 +25,7 @@ class erLhcoreClassExtensionLhcphpresque
 
         if (self::$resqueSet == false) {
             self::$resqueSet = true;
-            Resque::setBackend($this->setttings['connect_resque'], $this->setttings['connect_resque_db']);
+            Resque::setBackend($this->settings['connect_resque'], $this->settings['connect_resque_db']);
         }
 
         Resque::enqueue($queue, $class, $params);
