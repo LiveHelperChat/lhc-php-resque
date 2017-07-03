@@ -2,7 +2,6 @@
 
 class erLhcoreClassExtensionLhcphpresque
 {
-
     public function __construct()
     {}
 
@@ -31,10 +30,35 @@ class erLhcoreClassExtensionLhcphpresque
         Resque::enqueue($queue, $class, $params);
     }
     
+    public function reloadRedisFailedClasses($classes = array())
+    {
+        if (count($classes) > 0) {
+            $items = erLhcoreClassRedis::instance()->lrange('resque:failed',0, 100);
+            	
+            foreach ($items as $key => $item) {
+                	
+                $jobData = json_decode($item,true);
+                $time = strtotime($jobData['failed_at']);
+                	
+                // Delete older jobs than 7 days
+                if (time() > $time+(7*24*3600)) {
+                    erLhcoreClassRedis::instance()->lrem('resque:failed',1,$item);
+                }
+                	
+                if (isset($jobData['payload']['class']) && in_array($jobData['payload']['class'], $classes))
+                {
+                    $this->enqueue($jobData['queue'], $jobData['payload']['class'], $jobData['payload']['args'][0]);
+                    erLhcoreClassRedis::instance()->lrem('resque:failed',1,$item);
+                }
+            }
+        }
+    }        
+    
     public function autoload($className)
     {
         $classesArray = array(
-            'erLhcoreClassLHCDummyWorker' => 'extension/lhcphpresque/classes/lhqueuedummyworker.php'
+            'erLhcoreClassLHCDummyWorker' => 'extension/lhcphpresque/classes/lhqueuedummyworker.php',
+            'erLhcoreClassRedis' => 'extension/lhcphpresque/classes/lhpredis.php'
         );
         
         if (key_exists($className, $classesArray)) {
@@ -57,6 +81,11 @@ class erLhcoreClassExtensionLhcphpresque
             case 'settings':
                 $this->settings = include ('extension/lhcphpresque/settings/settings.ini.php');
                 return $this->settings;
+                break;
+            
+            case 'is_enabled_admin':
+                $this->is_enabled_admin = $this->settings['automated_hosting'] == false || ($this->settings['automated_hosting'] == true && in_array('instance', erConfigClassLhConfig::getInstance()->getSetting('site', 'extensions')));
+                return $this->is_enabled_admin;
                 break;
             
             default:
