@@ -2,17 +2,17 @@
 
 /**
  * Global queue
- * 
+ *
  * REDIS_BACKEND=localhost:6379 REDIS_BACKEND_DB=0 VERBOSE=1 COUNT=1 QUEUE='*' /usr/bin/php resque.php > var/resque.log
- * 
+ *
  * by priority
- * 
+ *
  * */
 
 $QUEUE = getenv('QUEUE');
 
 if(empty($QUEUE)) {
-	die("Set QUEUE env var containing the list of queues to work.\n");
+    die("Set QUEUE env var containing the list of queues to work.\n");
 }
 
 require_once "lib/core/lhcore/password.php";
@@ -24,8 +24,8 @@ spl_autoload_register(array('ezcBase','autoload'), true, false);
 
 // your code here
 ezcBaseInit::setCallback(
-		'ezcInitDatabaseInstance',
-		'erLhcoreClassLazyDatabaseConfiguration'
+    'ezcInitDatabaseInstance',
+    'erLhcoreClassLazyDatabaseConfiguration'
 );
 
 $instance = erLhcoreClassSystem::instance();
