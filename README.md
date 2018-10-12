@@ -14,23 +14,25 @@ LHC 2.52v
         'lhcphpresque'
       ),
 ```
-5. Make sure you have composer dependencies installed.
+4. Make sure you have composer dependencies installed.
 ```
 cd extension/lhcphpresque && composer update
 ```
-4. To start resque worker for debug just use. You can decrease interval how often worker checks for new jobs by settings interval value to 1
+5. Make sure you copied extension/lhcphpresque/settings/settings.ini.default.php to extension/lhcphpresque/settings/settings.ini.php. Edit `queues` and add custom queues you have from other extension.
+
+6. To start resque worker for debug just use. You can decrease interval how often worker checks for new jobs by settings interval value to 1
 ```
-REDIS_BACKEND=localhost:6379 INTERVAL=5 REDIS_BACKEND_DB=0 VERBOSE=1 COUNT=1 QUEUE='*' /usr/bin/php resque.php
+REDIS_BACKEND=localhost:6379 INTERVAL=5 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUEUE='*' /usr/bin/php resque.php
 ```
 
-5. Once you are happy how everything works. Create folder named 'cron' in root Live Helper Chat folder. Setup cronjobs as following. Before setuping cronjobs make sure you check their paths. First cronjobs ensures that worker is started upon reboot. Second cronjobs restarts worker every day (I suggest to keep it to avoid any memory leaks in php). Third one checks do we need to restart php resque or not. After code changes workers has to be restarted. Easiest way to restart is to create a lock file.
+7. Once you are happy how everything works. Create folder named `cron` in root Live Helper Chat folder. Setup cronjobs as following. Before setuping cronjobs make sure you check their paths. First cronjobs ensures that worker is started upon reboot. Second cronjobs restarts worker every day (I suggest to keep it to avoid any memory leaks in php). Third one checks do we need to restart php resque or not. After code changes workers has to be restarted. Easiest way to restart is to create a lock file.
 ```
 @reboot cd /var/www/web/extension/lhcphpresque/doc/ && ./phpresque.sh >> /dev/null 2>&1
 40 7 * * * /bin/touch /var/www/web/extension/lhcphpresque/doc/runresque.lock > /dev/null 2>&1
 * * * * * cd /var/www/web/extension/lhcphpresque/doc && ./resque.sh >> /dev/null 2>&1
 ```
 
-5. Example schedule command
+8. Example schedule command
 ```
 echo "Scheduling\n";
 erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_dummy_queue', 'erLhcoreClassLHCDummyWorker', array('arguments' => 'first argument'));
