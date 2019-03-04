@@ -25,6 +25,6 @@
     <?php include(erLhcoreClassDesign::designtpl('lhkernel/paginator.tpl.php')); ?>
 <?php endif;?>
 
-<input type="submit" class="btn btn-default" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Clean queue')?>" name="cleanActions"/>
+<input type="submit" class="btn btn-secondary" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Clean queue')?>" name="cleanActions"/>
 
 </form>
