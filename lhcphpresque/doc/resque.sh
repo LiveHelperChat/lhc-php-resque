@@ -12,6 +12,14 @@ fileCron='/var/www/web/extension/lhcphpresque/doc/.enable-cron'
 if [ -f $fileCron ];
 then
 
+numberProcess=$(ps aux | grep "[0-9] resque-1.2: *" | awk '{print $2}' | wc -l)
+
+if (( $numberProcess > 4 ));
+then
+  echo "To many running process..."
+  exit 1
+fi
+
 fileLock="/var/www/web/extension/lhcphpresque/doc/runresque.lock"
 
 if [ -f $fileLock ];
