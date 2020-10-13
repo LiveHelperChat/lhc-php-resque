@@ -8,6 +8,11 @@ class erLhcoreClassExtensionLhcphpresque
     public function run()
     {
         $this->registerAutoload();
+
+        if ($this->settings['uac'] === true) {
+            $dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
+            $dispatcher->listen('chat.update_active_chats', array($this, 'updateActiveCounter'));
+        }
     }
     
     public function registerAutoload()
@@ -19,7 +24,11 @@ class erLhcoreClassExtensionLhcphpresque
             'autoload'
         ), true, false);
     }
-        
+
+    public function updateActiveCounter($params) {
+        $this->enqueue('lhc_uac_queue', 'erLhcoreClassLHCUACWorker', array('user_id' => $params['user_id']));
+    }
+
     public function enqueue($queue, $class, $params) {
 
         if (self::$resqueSet == false) {
@@ -58,6 +67,7 @@ class erLhcoreClassExtensionLhcphpresque
     {
         $classesArray = array(
             'erLhcoreClassLHCDummyWorker' => 'extension/lhcphpresque/classes/lhqueuedummyworker.php',
+            'erLhcoreClassLHCUACWorker' => 'extension/lhcphpresque/classes/lhqueuelhcuacworker.php',
             'erLhcoreClassRedis' => 'extension/lhcphpresque/classes/lhpredis.php'
         );
         
