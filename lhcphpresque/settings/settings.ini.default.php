@@ -11,6 +11,7 @@ return array(
         'lhc_rest_api_queue',
         'lhc_rest_webhook',
         'lhc_uac_queue',
+        'lhc_mobile_notify',
     )
 );
 
