@@ -12,6 +12,7 @@ return array(
         'lhc_rest_webhook',
         'lhc_uac_queue',
         'lhc_mobile_notify',
+        'lhc_stats_resque',
     )
 );
 

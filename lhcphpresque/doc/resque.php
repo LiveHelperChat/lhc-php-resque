@@ -30,6 +30,7 @@ ezcBaseInit::setCallback(
 
 $instance = erLhcoreClassSystem::instance();
 $instance->SiteDir = dirname(__FILE__).'/';
+$instance->backgroundMode = true;
 
 $cfgSite = erConfigClassLhConfig::getInstance();
 
