@@ -47,6 +47,11 @@ $tz = isset($optionsSiteAccess['time_zone']) ? $optionsSiteAccess['time_zone'] :
 
 date_default_timezone_set($tz);
 
+erLhcoreClassModule::$defaultTimeZone = $tz;
+erLhcoreClassModule::$dateFormat = $cfgSite->getSetting('site', 'date_format', false);
+erLhcoreClassModule::$dateHourFormat = $cfgSite->getSetting('site', 'date_hour_format', false);
+erLhcoreClassModule::$dateDateHourFormat = $cfgSite->getSetting('site', 'date_date_hour_format', false);
+
 //************************
 
 $QUEUE = getenv('QUEUE');
