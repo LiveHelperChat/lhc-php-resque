@@ -37,3 +37,14 @@ REDIS_BACKEND=localhost:6379 INTERVAL=5 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUE
 echo "Scheduling\n";
 erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_dummy_queue', 'erLhcoreClassLHCDummyWorker', array('arguments' => 'first argument'));
 ```
+
+9. Setup alerts for resque jobs overloads
+
+To receive alerts about overload of jobs you have to setup cronjob to run every 5 minutes or so.
+
+```
+/usr/bin/php cron.php -s site_admin -e lhcphpresque -c cron/monitor
+```
+
+
+

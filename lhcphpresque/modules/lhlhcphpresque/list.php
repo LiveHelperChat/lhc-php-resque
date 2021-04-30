@@ -50,7 +50,7 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
     
     $Result['content'] = $tpl->fetch();
     $Result['path'] = array(
-        array('url' => erLhcoreClassDesign::baseurl('lhcphpresque/index'), 'title' => erTranslationClassLhTranslation::getInstance()->getTranslation('sugarcrm/module','PHP-Resque')),
-        array('title' => erTranslationClassLhTranslation::getInstance()->getTranslation('sugarcrm/module','List'))
+        array('url' => erLhcoreClassDesign::baseurl('lhcphpresque/index'), 'title' => erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','PHP-Resque')),
+        array('title' => erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','List'))
     );
 }

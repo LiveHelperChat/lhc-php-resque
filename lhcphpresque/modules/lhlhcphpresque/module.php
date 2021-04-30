@@ -17,5 +17,10 @@ $ViewList['list'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['options'] = array(
+    'params' => array('configure'),
+    'functions' => array('configure')
+);
+
 $FunctionList['use'] = array('explain' => 'Allow operator to use PHP-Resque module');
 $FunctionList['configure'] = array('explain' => 'Allow operator to configure PHP-Resque module');
