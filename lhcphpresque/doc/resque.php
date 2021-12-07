@@ -15,7 +15,6 @@ if(empty($QUEUE)) {
     die("Set QUEUE env var containing the list of queues to work.\n");
 }
 
-require_once "lib/core/lhcore/password.php";
 require_once "ezcomponents/Base/src/base.php"; // dependent on installation method, see below
 
 ezcBase::addClassRepository( './','./lib/autoloads');
