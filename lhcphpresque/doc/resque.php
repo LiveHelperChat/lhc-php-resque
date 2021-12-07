@@ -21,6 +21,7 @@ require_once "ezcomponents/Base/src/base.php"; // dependent on installation meth
 ezcBase::addClassRepository( './','./lib/autoloads');
 
 spl_autoload_register(array('ezcBase','autoload'), true, false);
+spl_autoload_register(array('erLhcoreClassSystem','autoload'), true, false);
 
 // your code here
 ezcBaseInit::setCallback(
