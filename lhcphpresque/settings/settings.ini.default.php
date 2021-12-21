@@ -13,6 +13,7 @@ return array(
         'lhc_uac_queue',
         'lhc_mobile_notify',
         'lhc_stats_resque',
+        'lhc_views_update',
     )
 );
 
