@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## exit immediately if uptime is lower than 120 seconds:
 uptime_secs=$(cat /proc/uptime | /bin/cut -d"." -f1)

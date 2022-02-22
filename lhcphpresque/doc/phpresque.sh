@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # live site cronjobs
 
 echo "Running live site cronjobs"
