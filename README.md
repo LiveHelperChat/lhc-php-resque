@@ -46,5 +46,13 @@ To receive alerts about overload of jobs you have to setup cronjob to run every 
 /usr/bin/php cron.php -s site_admin -e lhcphpresque -c cron/monitor
 ```
 
+To active for webhooks events. Modify main settings file.
 
+```
+ 'webhooks' =>
+    array (
+      'enabled' => true,
+      'worker' => 'resque'//'http',
+    ),
+```
 
