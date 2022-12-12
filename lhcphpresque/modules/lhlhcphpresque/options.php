@@ -14,6 +14,9 @@ if ( isset($_POST['StoreOptions']) ) {
         'queue_limit' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'int',array('min_range' => 1),FILTER_REQUIRE_ARRAY
         ),
+        'queue_limit_clean' => new ezcInputFormDefinitionElement(
+            ezcInputFormDefinitionElement::OPTIONAL, 'int',array('min_range' => 1),FILTER_REQUIRE_ARRAY
+        ),
         'report_email_phpresque' => new ezcInputFormDefinitionElement(
             ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
         ),
@@ -30,6 +33,12 @@ if ( isset($_POST['StoreOptions']) ) {
         $data['queue_limit'] = $form->queue_limit;
     } else {
         $data['queue_limit'] = [];
+    }
+
+    if ( $form->hasValidData( 'queue_limit_clean' ) ) {
+        $data['queue_limit_clean'] = $form->queue_limit_clean;
+    } else {
+        $data['queue_limit_clean'] = [];
     }
 
     if ( $form->hasValidData( 'report_email_phpresque' )) {

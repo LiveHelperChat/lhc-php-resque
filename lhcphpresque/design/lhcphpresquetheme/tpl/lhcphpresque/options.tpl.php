@@ -22,6 +22,9 @@
             <div class="col">
                 <input type="number" class="form-control form-control-sm" placeholder="" name="queue_limit[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_limit'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_limit'][$queue])) : '';?>" />
             </div>
+            <div class="col">
+                <input type="number" class="form-control form-control-sm" title="Clean queue if more than n jobs is pending" placeholder="Clean queue if more than n jobs is pending" name="queue_limit_clean[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_limit_clean'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_limit_clean'][$queue])) : '';?>" />
+            </div>
         </div>
     </div>
     <?php endforeach; ?>
