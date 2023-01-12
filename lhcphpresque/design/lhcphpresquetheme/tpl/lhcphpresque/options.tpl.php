@@ -13,7 +13,7 @@
     <div class="row">
     <?php foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->settings['queues'] as $queue) : ?>
     <div class="col-6 pb-1">
-        <div class="form-row">
+        <div class="row">
             <div class="col">
                 <label>
                     <input type="checkbox" name="queue[<?php echo $queue?>]" value="1" <?php if (isset($phpresque_options['queue'][$queue]) && $phpresque_options['queue'][$queue] == 1) : ?>checked="checked"<?php endif;?> /> <?php echo $queue?>
