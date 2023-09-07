@@ -3,6 +3,7 @@
 /**
  * php-resque worker to update active operators chats count
  * */
+#[\AllowDynamicProperties]
 class erLhcoreClassLHCUACWorker {
 
     public function perform()

@@ -4,6 +4,7 @@
  * Example of worker usage
  * 
  * */
+#[\AllowDynamicProperties]
 class erLhcoreClassLHCDummyWorker {
      
     public function perform()
