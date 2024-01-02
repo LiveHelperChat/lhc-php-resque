@@ -9,6 +9,81 @@
     <h3><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Statistic')?></h3>
     <ul>
         <li><a href="<?=erLhcoreClassDesign::baseurl('lhcphpresque/options')?>">Options</a></li>
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`chat_id`) FROM lhc_lheschat_index WHERE status = 0');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Chats pending to index - " . $records . "</li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`chat_id`) FROM lhc_lheschat_index WHERE status = 1');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Chats index in progress - " . $records . "</li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`mail_id`) FROM lhc_lhesmail_index WHERE status = 0 AND op = 1');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Conversations to index - " . $records . "</li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
+
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`mail_id`) FROM lhc_lhesmail_index WHERE status = 1 AND op = 1');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Conversations index in progress - " . $records . "</li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
+
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`mail_id`) FROM lhc_lhesmail_index WHERE status = 0 AND op = 0');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Mails to index - " . $records . "</li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`mail_id`) FROM lhc_lhesmail_index WHERE status = 1 AND op = 0');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Mails index progress - " . $records . "</li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
+
     </ul>
     <div class="row">
     	<div class="col-sm-4">
