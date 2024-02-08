@@ -14,7 +14,16 @@ return array(
         'lhc_mobile_notify',
         'lhc_stats_resque',
         'lhc_views_update',
+        'lhc_mailconv',
+        'lhc_mailconv_lang',
+        'lhc_mailing',
+        'lhc_elastic_queue',
+        'lhc_insult',
     )
 );
+
+
+
+
 
 ?>
