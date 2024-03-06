@@ -17,6 +17,7 @@ return array(
         'lhc_mailconv',
         'lhc_mailconv_lang',
         'lhc_mailing',
+        'lhc_mailconv_delete',
         'lhc_elastic_queue',
         'lhc_insult',
     )
