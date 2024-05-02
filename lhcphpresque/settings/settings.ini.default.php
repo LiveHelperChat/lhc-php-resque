@@ -20,6 +20,7 @@ return array(
         'lhc_mailconv_delete',
         'lhc_elastic_queue',
         'lhc_insult',
+        'lhc_imap_copy',
     )
 );
 
