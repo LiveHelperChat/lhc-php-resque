@@ -6,6 +6,7 @@ $validList = [
     'lhc_lhesmail_index',
     'lhc_mailconv_sent_copy',
     'lhc_lheschat_index',
+    'lhc_lhesou_index',
 ];
 
 

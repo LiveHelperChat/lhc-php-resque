@@ -96,6 +96,18 @@
 
         }
         ?>
+
+        <?php
+        try {
+            $db = ezcDbInstance::get();
+            $stmt = $db->prepare('SELECT count(`online_user_id`) FROM lhc_lhesou_index');
+            $stmt->execute();
+            $records = $stmt->fetchColumn();
+            echo "<li>Online visitors pending - " . $records . " <a class='csfr-required csfr-post' data-secured='1' href='?list=lhc_lhesou_index'>Reschedule</a></li>";
+        } catch (Exception $e) {
+
+        }
+        ?>
         <?php include(erLhcoreClassDesign::designtpl('lhkernel/secure_links.tpl.php')); ?>
     </ul>
     <div class="row">
