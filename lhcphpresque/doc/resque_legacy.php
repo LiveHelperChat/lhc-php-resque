@@ -119,19 +119,10 @@ erLhcoreClassModule::$dateDateHourFormat = $cfgSite->getSetting('site', 'date_da
 
 //************************
 
-if (!class_exists('Composer\Autoload\ClassLoader', false)) {
-    die(
-        'You need to set up the project dependencies using the following commands:' . PHP_EOL .
-        'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
-        'php composer.phar install' . PHP_EOL
-    );
-}
-
 $QUEUE = getenv('QUEUE');
 if(empty($QUEUE)) {
     die("Set QUEUE env var containing the list of queues to work.\n");
 }
-
 /**
  * REDIS_BACKEND can have simple 'host:port' format or use a DSN-style format like this:
  * - redis://user:pass@host:port
@@ -139,7 +130,6 @@ if(empty($QUEUE)) {
  * Note: the 'user' part of the DSN URI is required but is not used.
  */
 $REDIS_BACKEND = getenv('REDIS_BACKEND');
-
 // A redis database number
 $REDIS_BACKEND_DB = getenv('REDIS_BACKEND_DB');
 if(!empty($REDIS_BACKEND)) {
@@ -148,9 +138,6 @@ if(!empty($REDIS_BACKEND)) {
     else
         Resque::setBackend($REDIS_BACKEND, $REDIS_BACKEND_DB);
 }
-
-Resque_Plugin::initialize();
-
 $logLevel = false;
 $LOGGING = getenv('LOGGING');
 $VERBOSE = getenv('VERBOSE');
@@ -161,156 +148,49 @@ if(!empty($LOGGING) || !empty($VERBOSE)) {
 else if(!empty($VVERBOSE)) {
     $logLevel = true;
 }
-
 $APP_INCLUDE = getenv('APP_INCLUDE');
 if($APP_INCLUDE) {
     if(!file_exists($APP_INCLUDE)) {
         die('APP_INCLUDE ('.$APP_INCLUDE.") does not exist.\n");
     }
-
     require_once $APP_INCLUDE;
 }
-
 // See if the APP_INCLUDE containes a logger object,
 // If none exists, fallback to internal logger
 if (!isset($logger) || !is_object($logger)) {
     $logger = new Resque_Log($logLevel);
 }
-
 $BLOCKING = getenv('BLOCKING') !== FALSE;
-
 $interval = 5;
 $INTERVAL = getenv('INTERVAL');
 if(!empty($INTERVAL)) {
     $interval = $INTERVAL;
 }
-
 $count = 1;
 $COUNT = getenv('COUNT');
 if(!empty($COUNT) && $COUNT > 1) {
     $count = $COUNT;
 }
-
 $PREFIX = getenv('PREFIX');
 if(!empty($PREFIX)) {
     $logger->log(Psr\Log\LogLevel::INFO, 'Prefix set to {prefix}', array('prefix' => $PREFIX));
     Resque_Redis::prefix($PREFIX);
 }
-
-function cleanup_children($signal){
-    $GLOBALS['send_signal'] = $signal;
-}
-
 if($count > 1) {
-    $children = array();
-    $GLOBALS['send_signal'] = FALSE;
-
-    $die_signals = array(SIGTERM, SIGINT, SIGQUIT);
-    $all_signals = array_merge($die_signals, array(SIGUSR1, SIGUSR2, SIGCONT, SIGPIPE));
-
-    $logger->log(Psr\Log\LogLevel::DEBUG, 'Starting parent monitor {monitor}', array('monitor' => getmypid()));
-
     for($i = 0; $i < $count; ++$i) {
         $pid = Resque::fork();
-        if($pid == -1) {
+        if($pid === false || $pid === -1) {
             $logger->log(Psr\Log\LogLevel::EMERGENCY, 'Could not fork worker {count}', array('count' => $i));
-            die(1);
+            die();
         }
         // Child, start the worker
-        elseif(!$pid) {
+        else if(!$pid) {
             $queues = explode(',', $QUEUE);
             $worker = new Resque_Worker($queues);
             $worker->setLogger($logger);
-            $worker->hasParent = TRUE;
             $logger->log(Psr\Log\LogLevel::NOTICE, 'Starting worker {worker}', array('worker' => $worker));
             $worker->work($interval, $BLOCKING);
-            $logger->log(Psr\Log\LogLevel::NOTICE, 'Worker {worker} stopped', array('worker' => $worker));
             break;
-        }
-        else {
-            $children[$pid] = 1;
-            while (count($children) == $count){
-                if (!isset($registered)) {
-                    pcntl_async_signals(true);
-                    foreach ($all_signals as $signal) {
-                        pcntl_signal($signal,  "cleanup_children");
-                    }
-
-                    $PIDFILE = getenv('PIDFILE');
-                    if ($PIDFILE) {
-                        if(file_put_contents($PIDFILE, getmypid()) === false){
-                            $logger->log(Psr\Log\LogLevel::NOTICE, 'Could not write PID information to {pidfile}', array('pidfile' => $PIDFILE));
-                            die(2);
-                        }
-                    }
-
-                    $registered = TRUE;
-                }
-
-                if(function_exists('setproctitle')) {
-                    setproctitle('resque-' . Resque::VERSION . ": Monitoring {$count} children: [".implode(',', array_keys($children))."]");
-                }
-
-                $childPID = pcntl_waitpid(-1, $childStatus, WNOHANG);
-                if ($childPID != 0) {
-                    $logger->log(Psr\Log\LogLevel::NOTICE, 'A child worker died: {pid}', array('pid' => $childPID));
-                    unset($children[$childPID]);
-                    $i--;
-                }
-                usleep(250000);
-                if ($GLOBALS['send_signal'] !== FALSE){
-                    $killSignal = '';
-                    if($GLOBALS['send_signal']) {
-                        switch($GLOBALS['send_signal']) {
-                            case 2:
-                                $killSignal = 'SIGINT';
-                                break;
-                            case 3:
-                                $killSignal = 'SIGQUIT';
-                                break;
-                            case 15:
-                                $killSignal = 'SIGTERM';
-                                break;
-                        }
-                    }
-
-                    if($killSignal) {
-                        $logger->log(Psr\Log\LogLevel::DEBUG, 'Received signal {signal} for monitor {monitor}', array(
-                            'signal' => $killSignal,
-                            'monitor' => getmypid()
-                        ));
-                    }
-
-                    foreach ($children as $k => $v){
-                        $logger->log(Psr\Log\LogLevel::DEBUG, 'Sending signal {signal} to pid {pid}', array(
-                            'signal' => $killSignal,
-                            'pid' => $k
-                        ));
-                        posix_kill($k, $GLOBALS['send_signal']);
-                    }
-
-                    $logger->log(Psr\Log\LogLevel::NOTICE, 'Propagated signal {signal} to children (kill = {kill})', array(
-                        'signal' => $killSignal,
-                        'kill' => in_array($GLOBALS['send_signal'], $die_signals) ? 'true' : 'false'
-                    ));
-
-                    if (in_array($GLOBALS['send_signal'], $die_signals)) {
-                        foreach ($children as $k => $v){
-                            $logger->log(Psr\Log\LogLevel::DEBUG, 'Waiting for {pid}', array(
-                                'pid' => $k
-                            ));
-                            pcntl_waitpid($k, $childStatus);
-                        }
-
-                        $logger->log(Psr\Log\LogLevel::NOTICE, 'Finished shutting down all children', array('signal' => $killSignal));
-                        if(!Resque::redis()->ping()) {
-                            $logger->log(Psr\Log\LogLevel::EMERGENCY, 'Redis was already shut down!', array('signal' => $killSignal));
-                        }
-                        exit;
-                    }
-                    $GLOBALS['send_signal'] = FALSE;
-                }
-            }
         }
     }
 }
@@ -319,18 +199,14 @@ else {
     $queues = explode(',', $QUEUE);
     $worker = new Resque_Worker($queues);
     $worker->setLogger($logger);
-    $worker->hasParent = FALSE;
-
     $PIDFILE = getenv('PIDFILE');
     if ($PIDFILE) {
-        if(file_put_contents($PIDFILE, getmypid()) === false) {
-            $logger->log(Psr\Log\LogLevel::NOTICE, 'Could not write PID information to {pidfile}', array('pidfile' => $PIDFILE));
-            die(2);
-        }
+        file_put_contents($PIDFILE, getmypid()) or
+        die('Could not write PID information to ' . $PIDFILE);
     }
-
     $logger->log(Psr\Log\LogLevel::NOTICE, 'Starting worker {worker}', array('worker' => $worker));
     $worker->work($interval, $BLOCKING);
-    $logger->log(Psr\Log\LogLevel::NOTICE, 'Worker {worker} stopped', array('worker' => $worker));
 }
+
+//************************
 ?>

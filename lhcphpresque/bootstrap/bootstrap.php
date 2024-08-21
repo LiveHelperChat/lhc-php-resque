@@ -17,8 +17,6 @@ class erLhcoreClassExtensionLhcphpresque
     
     public function registerAutoload()
     {
-    	include 'extension/lhcphpresque/vendor/autoload.php';
-    	
         spl_autoload_register(array(
             $this,
             'autoload'
