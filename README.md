@@ -14,9 +14,9 @@ LHC 2.52v
         'lhcphpresque'
       ),
 ```
-4. Make sure you have composer dependencies installed.
+4. Make sure you have composer dependencies installed in main app folder.
 ```
-cd extension/lhcphpresque && composer update
+cd lhc_web/ && composer update
 ```
 5. Make sure you copied extension/lhcphpresque/settings/settings.ini.default.php to extension/lhcphpresque/settings/settings.ini.php. Edit `queues` and add custom queues you have from other extension.
 
