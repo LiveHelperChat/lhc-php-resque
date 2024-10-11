@@ -25,7 +25,7 @@ cd lhc_web/ && composer update
 REDIS_BACKEND=localhost:6379 INTERVAL=5 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUEUE='*' /usr/bin/php resque.php
 ```
 
-7. Once you are happy how everything works. Create folder named `cron` in root Live Helper Chat folder. Setup cronjobs as following. Before setuping cronjobs make sure you check their paths. First cronjobs ensures that worker is started upon reboot. Second cronjobs restarts worker every day (I suggest to keep it to avoid any memory leaks in php). Third one checks do we need to restart php resque or not. After code changes workers has to be restarted. Easiest way to restart is to create a lock file.
+7. Once you are happy how everything works. Before cronjob setup make sure you check their paths. First cronjob ensures that worker is started upon reboot. Second cronjob restarts worker every day (I suggest to keep it to avoid any memory leaks in php). Third one checks do we need to restart php resque or not. After code changes workers has to be restarted. Easiest way to restart is to create a lock file.
 ```
 @reboot cd /var/www/web/extension/lhcphpresque/doc/ && ./phpresque.sh >> /dev/null 2>&1
 40 7 * * * /bin/touch /var/www/web/extension/lhcphpresque/doc/runresque.lock > /dev/null 2>&1
