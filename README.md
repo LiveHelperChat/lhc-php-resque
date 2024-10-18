@@ -5,6 +5,8 @@ Enables php-resque functionality in Live Helper Chat
 
 LHC 2.52v
 
+Make sure background worker is running under same user as your web server.
+
 1. Copy lhcphpresque/doc/resque.php to main folder lhc_web. Just root folder where Live Helper Chat is installed.
 2. Copy lhc-php-resque/lhcphpresque to extension/lhcphpresque
 3. Activate extension in settings/settings.ini.php extensions section.
