@@ -21,6 +21,7 @@ return array(
         'lhc_elastic_queue',
         'lhc_insult',
         'lhc_imap_copy',
+        'lhc_instance_workflow',
     )
 );
 
