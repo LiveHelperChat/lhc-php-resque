@@ -8,11 +8,13 @@ class erLhcoreClassExtensionLhcphpresque
     public function run()
     {
         $this->registerAutoload();
+        $dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
 
         if ($this->settings['uac'] === true) {
-            $dispatcher = erLhcoreClassChatEventDispatcher::getInstance();
             $dispatcher->listen('chat.update_active_chats', array($this, 'updateActiveCounter'));
         }
+
+        $dispatcher->listen('chat.operator_status_changed', array($this, 'updateOnlineCacheKey'));
     }
     
     public function registerAutoload()
@@ -23,6 +25,18 @@ class erLhcoreClassExtensionLhcphpresque
         ), true, false);
     }
 
+    public function updateOnlineCacheKey()
+    {
+        $cacheKey = 'lhc_online_cache_key';
+
+        if ($this->settings['automated_hosting'] == true && !$this->is_enabled_admin) {
+            $inst_id = erLhcoreClassInstance::$instanceChat->id;
+            $cacheKey .= $inst_id;
+        }
+
+        erLhcoreClassRedis::instance()->setex($cacheKey, 3600, mt_rand(0,1000));
+    }
+    
     public function updateActiveCounter($params) {
         $this->enqueue('lhc_uac_queue', 'erLhcoreClassLHCUACWorker', array('user_id' => $params['user_id']));
     }
