@@ -39,6 +39,10 @@ function defaultCronjobFatalHandler($errno, $errstr, $errfile, $errline) {
         error_log($msg);
 
         erLhcoreClassLog::write($msg);
+
+        $db = ezcDbInstance::get();
+        $db->reconnect();
+
         erLhcoreClassLog::write(
             json_encode([
                 'msg' => $msg,
@@ -70,6 +74,9 @@ function defaultCronjobExceptionHandler($e) {
         'raw' => (string)$e,
     ],JSON_PRETTY_PRINT));
 
+    $db = ezcDbInstance::get();
+    $db->reconnect();
+
     erLhcoreClassLog::write(
         json_encode([
             'message' => $e->getMessage(),
@@ -90,8 +97,84 @@ function defaultCronjobExceptionHandler($e) {
     );
 }
 
+function defaultShutdownHandler() {
+    $error = error_get_last();
+
+    if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE])) {
+        $errorData = [
+            'job_id' => null,
+            'job_class' => 'Fatal Error',
+            'queue' => 'unknown',
+            'error_message' => $error['message'],
+            'error_trace' => "File: {$error['file']}, Line: {$error['line']}",
+            'error_type' => 'Fatal Error',
+            'created_at' => date('Y-m-d H:i:s'),
+            'worker_id' => gethostname() . ':' . getmypid()
+        ];
+
+        error_log(json_encode($errorData,JSON_PRETTY_PRINT));
+
+        $db = ezcDbInstance::get();
+        $db->reconnect();
+
+        erLhcoreClassLog::write(
+            json_encode([
+                'message' => $error['message'],
+                'file' => $error['file'],
+                'line' =>$error['line'],
+            ],JSON_PRETTY_PRINT)
+            ,
+            ezcLog::SUCCESS_AUDIT,
+            array(
+                'source' => 'lhc',
+                'category' => 'resque_fatal',
+                'line' => __LINE__,
+                'file' => __FILE__,
+                'object_id' => 0
+            )
+        );
+    }
+}
+
+function jobFailure($exception, $job){
+
+    erLhcoreClassLog::write(json_encode([
+        'message' => $exception->getMessage(),
+        'file' => $exception->getFile(),
+        'line' => $exception->getLine(),
+        'trace' => $exception->getTrace(),
+        'raw' => (string)$exception,
+    ],JSON_PRETTY_PRINT));
+
+    $db = ezcDbInstance::get();
+    $db->reconnect();
+
+    erLhcoreClassLog::write(
+        json_encode([
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTrace(),
+            'raw' => (string)$exception,
+        ],JSON_PRETTY_PRINT)
+        ,
+        ezcLog::SUCCESS_AUDIT,
+        array(
+            'source' => 'lhc',
+            'category' => 'resque_fatal',
+            'line' => __LINE__,
+            'file' => __FILE__,
+            'object_id' => 0
+        )
+    );
+}
+
 set_exception_handler( 'defaultCronjobExceptionHandler' );
 set_error_handler ( 'defaultCronjobFatalHandler' );
+register_shutdown_function('defaultShutdownHandler');
+
+// Register the job failure event listener
+Resque_Event::listen('onFailure', 'jobFailure');
 
 $instance = erLhcoreClassSystem::instance();
 $instance->SiteDir = dirname(__FILE__).'/';
