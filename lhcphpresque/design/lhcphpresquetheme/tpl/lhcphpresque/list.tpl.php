@@ -11,10 +11,10 @@
 	<?php foreach ($items as $key => $item) : ?>
     <tr>
         <td><?php echo $key+$pages->low?></td>
-        <td class="fs11"><?=htmlspecialchars($item)?></td>        
+        <td class="fs11"><?php echo htmlspecialchars($item)?></td>
         <td class="fs11">
         <?php if ($list == 'resque:failed') : ?>
-        <a href="<?php echo erLhcoreClassDesign::baseurl('lhcphpresque/list')?>/resque:failed/(reload)/<?php echo json_decode($item)->payload->class;?>" class="btn btn-default btn-xs"><?=erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Reload')?></a>
+        <a href="<?php echo erLhcoreClassDesign::baseurl('lhcphpresque/list')?>/resque:failed/(reload)/<?php echo json_decode($item)->payload->class;?>" class="btn btn-default btn-xs"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Reload')?></a>
         <?php endif; ?>
         </td>        
     </tr>
