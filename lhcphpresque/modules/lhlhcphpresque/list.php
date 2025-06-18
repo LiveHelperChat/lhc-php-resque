@@ -14,7 +14,7 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
     $tpl = erLhcoreClassTemplate::getInstance('lhcphpresque/list.tpl.php');
     $classList = array();
     
-    $list = $Params['user_parameters']['list'];
+    $list = strip_tags($Params['user_parameters']['list']);
     
     $tpl->set('list',$list);
     
@@ -36,7 +36,7 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
     $pages = new lhPaginator();
     $pages->items_total = erLhcoreClassRedis::instance()->llen($list);
     $pages->translationContext = 'abstract/list';
-    $pages->serverURL = erLhcoreClassDesign::baseurl('lhcphpresque/list') . '/' .$list;
+    $pages->serverURL = erLhcoreClassDesign::baseurl('lhcphpresque/list') . '/' . $list;
     $pages->setItemsPerPage(20);
     $pages->paginate();
     

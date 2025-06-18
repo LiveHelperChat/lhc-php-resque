@@ -1,5 +1,5 @@
 <h1>List</h1>
-<form action="<?php echo erLhcoreClassDesign::baseurl('lhcphpresque/list')?>/<?php echo $list?>/" method="post">
+<form action="<?php echo erLhcoreClassDesign::baseurl('lhcphpresque/list')?>/<?php echo htmlspecialchars($list)?>/" method="post">
 <table class="table" cellpadding="0" cellspacing="0" width="100%" ng-non-bindable>
 	<thead>
 	<tr>
@@ -14,7 +14,7 @@
         <td class="fs11"><?=htmlspecialchars($item)?></td>        
         <td class="fs11">
         <?php if ($list == 'resque:failed') : ?>
-        <a href="<?php echo erLhcoreClassDesign::baseurl('lhcphpresque/list')?>/<?php echo $list?>/(reload)/<?php echo json_decode($item)->payload->class;?>" class="btn btn-default btn-xs"><?=erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Reload')?></a>
+        <a href="<?php echo erLhcoreClassDesign::baseurl('lhcphpresque/list')?>/resque:failed/(reload)/<?php echo json_decode($item)->payload->class;?>" class="btn btn-default btn-xs"><?=erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Reload')?></a>
         <?php endif; ?>
         </td>        
     </tr>
