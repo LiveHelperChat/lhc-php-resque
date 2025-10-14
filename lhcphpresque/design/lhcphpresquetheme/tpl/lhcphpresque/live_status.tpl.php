@@ -43,7 +43,7 @@ if (empty($workers)) {
     $workerList = [];
     foreach ($workers as $worker) {
         $workerData = $redis->get('resque:worker:' . $worker);
-        $duration = 0;
+        $duration = -1;
         $job = null;
         
         if ($workerData) {
@@ -77,7 +77,7 @@ if (empty($workers)) {
         <?php if ($workerData) : ?>
             <?php if ($job && isset($job['payload']['class'])) : ?>
                 <li style="margin-bottom: 10px;" class="fs13">
-                    <strong title="<?php echo htmlspecialchars($worker); ?>"><?php echo erLhcoreClassDesign::shrt($worker,36,'...',30,ENT_QUOTES);?> </strong><form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
+                    <strong title="<?php echo htmlspecialchars($worker); ?>"><?php echo erLhcoreClassDesign::shrt($worker,60,'...',30,ENT_QUOTES);?> </strong><form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                         <input type="hidden" name="kill_worker" value="1">
                         <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
                         <?php include(erLhcoreClassDesign::designtpl('lhkernel/csfr_token.tpl.php'));?>
@@ -91,14 +91,14 @@ if (empty($workers)) {
                     ?>
                     Duration: <b><?php echo sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds); ?></b><br/>
                     Queue: 
-<pre class="pb-0 mb-0"><?php echo htmlspecialchars(json_encode($job, JSON_PRETTY_PRINT)); ?></pre>
+<pre class="pb-0 mb-0" style="max-width: 400px;"><?php echo htmlspecialchars(json_encode($job, JSON_PRETTY_PRINT)); ?></pre>
                     Queued At: <?php echo date('Y-m-d H:i:s', (int)$job['payload']['queue_time']); ?><br/>
                     Started At: <?php echo htmlspecialchars(date('Y-m-d H:i:s',strtotime($job['run_at']))); ?><br/>
 
                 </li>
             <?php else : ?>
                 <li style="margin-bottom: 10px;">
-                    <strong><?php echo htmlspecialchars($worker); ?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?>
+                    <strong title="<?php echo htmlspecialchars($worker); ?>" class="fs13"><?php echo erLhcoreClassDesign::shrt($worker,60,'...',30,ENT_QUOTES);?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?>
                     &nbsp;&nbsp;<form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                         <input type="hidden" name="kill_worker" value="1">
                         <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
@@ -110,7 +110,7 @@ if (empty($workers)) {
 
         <?php else : ?>
             <li style="margin-bottom: 10px;">
-                <strong><?php echo htmlspecialchars($worker); ?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?><br/>
+                <strong title="<?php echo htmlspecialchars($worker); ?>" class="fs13"><?php echo erLhcoreClassDesign::shrt($worker,60,'...',30,ENT_QUOTES);?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?><br/>
                 &nbsp;&nbsp;<form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                     <input type="hidden" name="kill_worker" value="1">
                     <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
