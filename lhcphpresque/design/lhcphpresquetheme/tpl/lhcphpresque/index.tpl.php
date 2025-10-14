@@ -139,6 +139,13 @@
                 <button id="toggleRefresh" class="btn btn-sm btn-success" style="margin-left: 10px;">
                     <span id="refreshIcon">▶</span> <span id="refreshText">Start Auto-refresh</span>
                 </button>
+                <form method="post" style="display: inline-block; margin-left: 10px;">
+                    <input type="hidden" name="clear_workers" value="1">
+                    <?php include(erLhcoreClassDesign::designtpl('lhkernel/csfr_token.tpl.php'));?>
+                    <button type="submit" class="btn btn-sm btn-warning csfr-required" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Are you sure you want to clear all workers?'); ?>');">
+                        <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Clear Workers'); ?>
+                    </button>
+                </form>
             </h3>
             <div style="margin-bottom: 10px; font-size: 12px; color: #666;">
                 <span id="lastUpdateText">Last updated: </span><span id="lastUpdateTime"><?php echo date('Y-m-d H:i:s'); ?></span>

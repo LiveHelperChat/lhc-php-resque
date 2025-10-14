@@ -1,10 +1,42 @@
 <?php 
 $redis = erLhcoreClassRedis::instance();
-$workers = $redis->smembers('resque:workers');
+// Use SSCAN to limit workers retrieval to avoid performance issues with dead workers
+$workers = [];
+$cursor = null;
+$pattern = null;
+do {
+    $members = $redis->sscan($cursor, 'resque:workers', $pattern, 100);
+    if ($members !== false && !empty($members)) {
+        $workers = array_merge($workers, $members);
+        if (count($workers) >= 100) {
+            $workers = array_slice($workers, 0, 100);
+            break;
+        }
+    } else {
+        break;
+    }
+} while ($cursor != 0);
+
+if (empty($workers)) {
+    // Get all keys matching 'resque:worker:*'
+    $workerKeys = $redis->keys('resque:worker:*');
+
+    $workersRaw = [];
+    foreach ($workerKeys as $workerKey) {
+        // Extract worker name (everything after 'resque:worker:')
+        $workerName = substr($workerKey, strlen('resque:worker:'));
+        $workersRaw[] = $workerName;
+    }
+    $workersRegistered = count($workersRaw);
+    $workers = $workersRaw;
+} else {
+    $workersRegistered = count($workers);
+}
+
 ?>
 
 <?php if (!empty($workers)) : ?>
-    <li><strong><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Active Workers'); ?>:</strong> <?php echo count($workers); ?></li>
+    <li><strong><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Active Workers'); ?>:</strong> <?php echo $workersRegistered; ?></li>
     
     <?php 
     // Collect worker data with durations for sorting

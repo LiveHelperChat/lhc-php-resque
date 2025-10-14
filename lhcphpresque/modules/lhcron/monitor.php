@@ -11,8 +11,33 @@ if (isset($dataOptions['queue_timeout_limit']) && !empty($dataOptions['queue_tim
 
     try {
         $redis = erLhcoreClassRedis::instance();
-        $workers = $redis->smembers('resque:workers');
-         
+        // Use SSCAN to limit workers retrieval to avoid performance issues with dead workers
+        $workers = [];
+        $cursor = null;
+        $pattern = null;
+        do {
+            $members = $redis->sscan($cursor, 'resque:workers', $pattern, 100);
+            if ($members !== false && !empty($members)) {
+                $workers = array_merge($workers, $members);
+                if (count($workers) >= 100) {
+                    $workers = array_slice($workers, 0, 100);
+                    break;
+                }
+            } else {
+                break;
+            }
+        } while ($cursor != 0);
+
+        if (empty($workers)) {
+            // Get all keys matching 'resque:worker:*'
+            $workerKeys = $redis->keys('resque:worker:*');
+            foreach ($workerKeys as $workerKey) {
+                // Extract worker name (everything after 'resque:worker:')
+                $workerName = substr($workerKey, strlen('resque:worker:'));
+                $workers[] = $workerName;
+            }
+        }
+
         if (!empty($workers)) {
             foreach ($workers as $worker) {
                 $workerData = $redis->get('resque:worker:' . $worker);

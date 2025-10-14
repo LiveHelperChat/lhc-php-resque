@@ -23,6 +23,25 @@ if (isset($_GET['list']) && in_array ($_GET['list'], $validList)) {
     $db->query("UPDATE " . $db->quoteIdentifier($_GET['list']) ." SET status = 0");
 }
 
+// Clear workers functionality
+if (isset($_POST['clear_workers'])) {
+
+    $currentUser = erLhcoreClassUser::instance();
+
+    if (!isset($_POST['csfr_token']) || !$currentUser->validateCSFRToken($_POST['csfr_token'])) {
+        erLhcoreClassModule::redirect('lhcphpresque/index' );
+        exit;
+    }
+
+    try {
+        $redis = erLhcoreClassRedis::instance();
+        $redis->del('resque:workers');
+        $tpl->set('success_message', erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','All workers cleared'));
+    } catch (Exception $e) {
+        $tpl->set('error_message', erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Failed to clear workers') . ': ' . $e->getMessage());
+    }
+}
+
 // Kill worker functionality
 if (isset($_POST['kill_worker']) && !empty($_POST['worker_id'])) {
     
