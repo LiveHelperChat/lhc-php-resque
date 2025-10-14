@@ -36,7 +36,7 @@ if (empty($workers)) {
 ?>
 
 <?php if (!empty($workers)) : ?>
-    <li><strong><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Active Workers'); ?>:</strong> <?php echo $workersRegistered; ?></li>
+    <li><strong><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Active Workers'); ?>:</strong>&nbsp; <?php echo $workersRegistered; ?></li>
     
     <?php 
     // Collect worker data with durations for sorting
@@ -76,12 +76,12 @@ if (empty($workers)) {
         
         <?php if ($workerData) : ?>
             <?php if ($job && isset($job['payload']['class'])) : ?>
-                <li style="margin-bottom: 10px;" class="fs13">
-                    <strong><?php echo htmlspecialchars($worker); ?></strong><form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
+                <li class="mb-1 fs13">
+                    <strong title="<?php echo htmlspecialchars($worker); ?>"><?php echo erLhcoreClassDesign::shrt($worker,36,'...',30,ENT_QUOTES);?></strong><form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                         <input type="hidden" name="kill_worker" value="1">
                         <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
                         <?php include(erLhcoreClassDesign::designtpl('lhkernel/csfr_token.tpl.php'));?>
-                        <button type="submit" class="btn btn-danger btn-xs csfr-required" style="margin-top: 5px;"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Kill Worker'); ?></button>
+                        &nbsp;<button type="submit" class="btn btn-danger btn-xs csfr-required" style="margin-top: 5px;"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Kill Worker'); ?></button>
                     </form><br/>
                     <?php 
                     $duration = $workerInfo['duration'];
@@ -97,25 +97,25 @@ if (empty($workers)) {
 
                 </li>
             <?php else : ?>
-                <li style="margin-bottom: 10px;">
+                <li class="mb-1 fs13">
                     <strong><?php echo htmlspecialchars($worker); ?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?>
                     &nbsp;&nbsp;<form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                         <input type="hidden" name="kill_worker" value="1">
                         <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
                         <?php include(erLhcoreClassDesign::designtpl('lhkernel/csfr_token.tpl.php'));?>
-                        <button type="submit" class="btn btn-danger btn-xs csfr-required" style="margin-top: 5px;"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Kill Worker'); ?></button>
+                         &nbsp;<button type="submit" class="btn btn-danger btn-xs csfr-required" style="margin-top: 5px;"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Kill Worker'); ?></button>
                     </form>
                 </li>
             <?php endif; ?>
 
         <?php else : ?>
-            <li style="margin-bottom: 10px;">
+            <li class="mb-1 fs13">
                 <strong><?php echo htmlspecialchars($worker); ?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?><br/>
                 &nbsp;&nbsp;<form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                     <input type="hidden" name="kill_worker" value="1">
                     <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
                     <?php include(erLhcoreClassDesign::designtpl('lhkernel/csfr_token.tpl.php'));?>
-                    <button type="submit" class="btn btn-danger btn-xs csfr-required" style="margin-top: 5px;"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Kill Worker'); ?></button>
+                     &nbsp;<button type="submit" class="btn btn-danger btn-xs csfr-required" style="margin-top: 5px;"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Kill Worker'); ?></button>
                 </form>
             </li>
         <?php endif; ?>
