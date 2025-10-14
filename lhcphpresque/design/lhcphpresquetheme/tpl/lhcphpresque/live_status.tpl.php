@@ -20,18 +20,22 @@ do {
 if (empty($workers)) {
     // Get all keys matching 'resque:worker:*'
     $workerKeys = $redis->keys('resque:worker:*');
+    $workersRegistered = count($workerKeys);
 
     $workersRaw = [];
     foreach ($workerKeys as $workerKey) {
         // Extract worker name (everything after 'resque:worker:')
         $workerName = substr($workerKey, strlen('resque:worker:'));
         $workersRaw[] = $workerName;
+        if (count($workersRaw) >= 100) {
+            break;
+        }
     }
-    $workersRegistered = count($workersRaw);
     $workers = $workersRaw;
 } else {
     $workersRegistered = count($workers);
 }
+
 
 ?>
 

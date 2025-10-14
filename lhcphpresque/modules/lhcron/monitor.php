@@ -35,6 +35,9 @@ if (isset($dataOptions['queue_timeout_limit']) && !empty($dataOptions['queue_tim
                 // Extract worker name (everything after 'resque:worker:')
                 $workerName = substr($workerKey, strlen('resque:worker:'));
                 $workers[] = $workerName;
+                if (count($workers) >= 100) {
+                    break;
+                }
             }
         }
 

@@ -36,6 +36,12 @@ if (isset($_POST['clear_workers'])) {
     try {
         $redis = erLhcoreClassRedis::instance();
         $redis->del('resque:workers');
+
+        $workerKeys = $redis->keys('resque:worker:*');
+        if (!empty($workerKeys)) {
+            $redis->del($workerKeys);
+        }
+
         $tpl->set('success_message', erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','All workers cleared'));
     } catch (Exception $e) {
         $tpl->set('error_message', erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Failed to clear workers') . ': ' . $e->getMessage());
