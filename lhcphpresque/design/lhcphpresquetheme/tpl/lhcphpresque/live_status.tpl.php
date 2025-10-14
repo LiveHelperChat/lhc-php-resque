@@ -98,7 +98,7 @@ if (empty($workers)) {
                 </li>
             <?php else : ?>
                 <li class="mb-1 fs13">
-                    <strong><?php echo htmlspecialchars($worker); ?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?>
+                    <strong title="<?php echo htmlspecialchars($worker); ?>><?php echo erLhcoreClassDesign::shrt($worker,36,'...',30,ENT_QUOTES);?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?>
                     &nbsp;&nbsp;<form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                         <input type="hidden" name="kill_worker" value="1">
                         <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
@@ -110,7 +110,7 @@ if (empty($workers)) {
 
         <?php else : ?>
             <li class="mb-1 fs13">
-                <strong><?php echo htmlspecialchars($worker); ?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?><br/>
+                <strong title="<?php echo htmlspecialchars($worker); ?>><?php echo erLhcoreClassDesign::shrt($worker,36,'...',30,ENT_QUOTES);?></strong> - <?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Idle'); ?><br/>
                 &nbsp;&nbsp;<form method="post" style="display:inline;" class="kill-worker-form" onsubmit="return confirm('Are you sure you want to kill this worker?');">
                     <input type="hidden" name="kill_worker" value="1">
                     <input type="hidden" name="worker_id" value="<?php echo htmlspecialchars($worker, ENT_QUOTES); ?>">
