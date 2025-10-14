@@ -15,8 +15,10 @@ class erLhcoreClassLHCDummyWorker {
         $stmt = $db->prepare('SHOW TABLES');           
         $stmt->execute();
         $rows = $stmt->fetchAll();
-        
-        print_r($rows);
+
+        sleep(15);
+
+        print_r('TABLES - FOUND - ' . count($rows));
     }
 }
 

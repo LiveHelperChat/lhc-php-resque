@@ -11,3 +11,5 @@ REDIS_BACKEND=localhost:6379 INTERVAL=5 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUE
 
 echo "Scheduling\n";
 erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->enqueue('lhc_dummy_queue', 'erLhcoreClassLHCDummyWorker', array('arguments' => 'first argument'));
+
+runuser -u apache -- sh -c "REDIS_BACKEND=localhost:6379 INTERVAL=1 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUEUE='*' php82 resque.php"

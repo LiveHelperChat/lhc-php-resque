@@ -17,6 +17,12 @@ $ViewList['list'] = array(
     'functions' => array('configure')
 );
 
+$ViewList['livestatus'] = array(
+    'params' => array(),
+    'uparams' => array(),
+    'functions' => array('configure')
+);
+
 $ViewList['options'] = array(
     'params' => array('configure'),
     'functions' => array('configure')

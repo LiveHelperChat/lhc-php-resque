@@ -11,23 +11,34 @@
     <p><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Choose what queues we should monitor and enter threshold value for them.'); ?></p>
 
     <div class="row">
-    <?php foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->settings['queues'] as $queue) : ?>
-    <div class="col-6 pb-1">
-        <div class="row">
-            <div class="col">
-                <label>
-                    <input type="checkbox" name="queue[<?php echo $queue?>]" value="1" <?php if (isset($phpresque_options['queue'][$queue]) && $phpresque_options['queue'][$queue] == 1) : ?>checked="checked"<?php endif;?> /> <?php echo $queue?>
-                </label>
-            </div>
-            <div class="col">
-                <input type="number" class="form-control form-control-sm" placeholder="" name="queue_limit[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_limit'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_limit'][$queue])) : '';?>" />
-            </div>
-            <div class="col">
-                <input type="number" class="form-control form-control-sm" title="Clean queue if more than n jobs is pending" placeholder="Clean queue if more than n jobs is pending" name="queue_limit_clean[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_limit_clean'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_limit_clean'][$queue])) : '';?>" />
+        <div class="col-12 pb-1">
+            <div class="row">
+                <div class="col"><strong>Enable</strong></div>
+                <div class="col"><strong>Send alert of queue if more than n jobs is pending</strong></div>
+                <div class="col"><strong>Clean queue if more than n jobs is pending</strong></div>
+                <div class="col"><strong>Kill job if it's running more than n seconds</strong></div>
             </div>
         </div>
-    </div>
-    <?php endforeach; ?>
+        <?php foreach (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->settings['queues'] as $queue) : ?>
+        <div class="col-12 pb-1">
+            <div class="row">
+                <div class="col">
+                    <label>
+                        <input type="checkbox" name="queue[<?php echo $queue?>]" value="1" <?php if (isset($phpresque_options['queue'][$queue]) && $phpresque_options['queue'][$queue] == 1) : ?>checked="checked"<?php endif;?> /> <?php echo $queue?>
+                    </label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control form-control-sm" title="Send alert of queue if more than n jobs is pending" name="queue_limit[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_limit'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_limit'][$queue])) : '';?>" />
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control form-control-sm" title="Clean queue if more than n jobs is pending" placeholder="Clean queue if more than n jobs is pending" name="queue_limit_clean[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_limit_clean'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_limit_clean'][$queue])) : '';?>" />
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control form-control-sm" title="Kill job if it's running more than n seconds" placeholder="Maximum job duration in seconds before it's killed" name="queue_timeout_limit[<?php echo $queue?>]" value="<?php isset($phpresque_options['queue_timeout_limit'][$queue]) ? print(htmlspecialchars($phpresque_options['queue_timeout_limit'][$queue])) : '';?>" />
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
     </div>
 
     <div class="form-group">

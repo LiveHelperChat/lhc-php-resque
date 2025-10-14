@@ -7,7 +7,10 @@ LHC 2.52v
 
 Make sure background worker is running under same user as your web server.
 
-1. Copy lhcphpresque/doc/resque.php to main folder lhc_web. Just root folder where Live Helper Chat is installed.
+1. Copy `lhcphpresque/doc/resque.php` or `lhcphpresque/doc/resque_no_requeue.php` to main folder lhc_web as `resque.php`. Just root folder where Live Helper Chat is installed.
+   2. There is two versions
+      1. `lhcphpresque/doc/resque.php` - if job received kill signal it's rescheduled
+      2. `lhcphpresque/doc/resque_no_requeue.php` - if job received kill signal it's not rescheduled. Up to you which version you want to use.
 2. Copy lhc-php-resque/lhcphpresque to extension/lhcphpresque
 3. Activate extension in settings/settings.ini.php extensions section.
 ```
@@ -25,6 +28,11 @@ cd lhc_web/ && composer update
 6. To start resque worker for debug just use. You can decrease interval how often worker checks for new jobs by settings interval value to 1
 ```
 REDIS_BACKEND=localhost:6379 INTERVAL=5 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUEUE='*' /usr/bin/php resque.php
+```
+
+Tu run for testing purposes under apache user. You can increase `COUNT=1` to 2 to test forking properly.
+```
+runuser -u apache -- sh -c "REDIS_BACKEND=localhost:6379 INTERVAL=1 REDIS_BACKEND_DB=1 VERBOSE=1 COUNT=1 QUEUE='*' php resque.php"
 ```
 
 7. Once you are happy how everything works. Before cronjob setup make sure you check their paths. First cronjob ensures that worker is started upon reboot. Second cronjob restarts worker every day (I suggest to keep it to avoid any memory leaks in php). Third one checks do we need to restart php resque or not. After code changes workers has to be restarted. Easiest way to restart is to create a lock file.

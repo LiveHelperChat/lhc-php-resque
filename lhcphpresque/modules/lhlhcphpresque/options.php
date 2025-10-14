@@ -26,6 +26,9 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
             'queue_limit' => new ezcInputFormDefinitionElement(
                 ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1), FILTER_REQUIRE_ARRAY
             ),
+            'queue_timeout_limit' => new ezcInputFormDefinitionElement(
+                ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1), FILTER_REQUIRE_ARRAY
+            ),
             'queue_limit_clean' => new ezcInputFormDefinitionElement(
                 ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1), FILTER_REQUIRE_ARRAY
             ),
@@ -51,6 +54,12 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
             $data['queue_limit_clean'] = $form->queue_limit_clean;
         } else {
             $data['queue_limit_clean'] = [];
+        }
+
+        if ($form->hasValidData('queue_timeout_limit')) {
+            $data['queue_timeout_limit'] = $form->queue_timeout_limit;
+        } else {
+            $data['queue_timeout_limit'] = [];
         }
 
         if ($form->hasValidData('report_email_phpresque')) {
