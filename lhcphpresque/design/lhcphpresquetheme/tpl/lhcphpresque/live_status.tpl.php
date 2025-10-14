@@ -5,15 +5,11 @@ $workers = [];
 $cursor = null;
 $pattern = null;
 do {
-    $members = $redis->sscan($cursor, 'resque:workers', $pattern, 100);
-    if ($members !== false && !empty($members)) {
-        $workers = array_merge($workers, $members);
+    $workers = $redis->smembers('resque:workers');
+    if ($workers !== false && !empty($workers)) {
         if (count($workers) >= 100) {
             $workers = array_slice($workers, 0, 100);
-            break;
         }
-    } else {
-        break;
     }
 } while ($cursor != 0);
 
