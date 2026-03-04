@@ -24,7 +24,7 @@ fileLock="/var/www/web/extension/lhcphpresque/doc/runresque.lock"
 
 if [ -f $fileLock ];
 then
-    kill -9 $(ps aux | grep "php resque.php" | awk '{print $2}')
+    kill -9 $(ps aux | grep -E 'php .*resque\.php$' | awk '{print $2}')
     kill -9 $(ps aux | grep "[0-9] resque-1.2: *" | awk '{print $2}')
     cd /var/www/web/extension/lhcphpresque/doc/ && ./phpresque.sh &
     rm -f $fileLock;
