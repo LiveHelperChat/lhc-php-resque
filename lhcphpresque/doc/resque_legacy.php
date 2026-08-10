@@ -117,6 +117,8 @@ erLhcoreClassModule::$dateFormat = $cfgSite->getSetting('site', 'date_format', f
 erLhcoreClassModule::$dateHourFormat = $cfgSite->getSetting('site', 'date_hour_format', false);
 erLhcoreClassModule::$dateDateHourFormat = $cfgSite->getSetting('site', 'date_date_hour_format', false);
 
+ezcDbInstance::reset();
+
 //************************
 
 $QUEUE = getenv('QUEUE');
