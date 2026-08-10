@@ -200,6 +200,22 @@ erLhcoreClassModule::$dateFormat = $cfgSite->getSetting('site', 'date_format', f
 erLhcoreClassModule::$dateHourFormat = $cfgSite->getSetting('site', 'date_hour_format', false);
 erLhcoreClassModule::$dateDateHourFormat = $cfgSite->getSetting('site', 'date_date_hour_format', false);
 
+// Reset database connection with sessions
+foreach ([
+    'erLhcoreClassUser',
+    'erLhcoreClassRole',
+    'erLhcoreClassMailconv',
+    'erLhcoreClassUserDep',
+    'erLhcoreClassPermission',
+    'erLhcoreClassAbstract',
+    'erLhcoreClassGenericBot',
+    'erLhcoreClassDepartament',
+    'erLhcoreClassChat'] as $resetClass) {
+    if (class_exists($resetClass, false) && method_exists($resetClass, 'resetSession')) {
+        $resetClass::resetSession();
+    }
+}
+
 ezcDbInstance::reset();
 
 //************************
