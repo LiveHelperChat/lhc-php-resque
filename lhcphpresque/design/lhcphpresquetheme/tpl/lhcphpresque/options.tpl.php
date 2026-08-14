@@ -41,6 +41,26 @@
         <?php endforeach; ?>
     </div>
 
+    <div class="row">
+        <div class="col-12 pb-1">
+            <div class="row">
+                <div class="col"><strong><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Failed jobs (resque:failed) monitoring'); ?></strong></div>
+            </div>
+        </div>
+        <div class="col-12 pb-1">
+            <div class="row">
+                <div class="col">
+                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Alert if more than n failed jobs'); ?></label>
+                    <input type="number" class="form-control form-control-sm" title="Alert if more than n failed jobs" name="failed_jobs_limit" value="<?php isset($phpresque_options['failed_jobs_limit']) ? print(htmlspecialchars($phpresque_options['failed_jobs_limit'])) : '';?>" />
+                </div>
+                <div class="col">
+                    <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','in the last n minutes'); ?></label>
+                    <input type="number" class="form-control form-control-sm" title="Alert if more than n failed jobs in the last n minutes" placeholder="Time window in minutes" name="failed_jobs_timeout" value="<?php isset($phpresque_options['failed_jobs_timeout']) ? print(htmlspecialchars($phpresque_options['failed_jobs_timeout'])) : '';?>" />
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="form-group">
         <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','If queue limit is reached send alert e-mail to these e-mails.'); ?></label>
         <input type="text" class="form-control form-control-sm" name="report_email_phpresque" value="<?php isset($phpresque_options['report_email_phpresque']) ? print htmlspecialchars($phpresque_options['report_email_phpresque']) : ''?>" />

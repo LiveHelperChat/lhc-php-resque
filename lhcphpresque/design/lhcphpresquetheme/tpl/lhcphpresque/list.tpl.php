@@ -27,4 +27,8 @@
 
 <input type="submit" class="btn btn-secondary" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('useradmin/list','Clean queue')?>" name="cleanActions"/>
 
+<?php if ($list == 'resque:failed') : ?>
+    <input type="submit" class="btn btn-secondary" value="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('lhcphpresquetheme/admin','Reschedule all')?>" name="rescheduleAll"/>
+<?php endif; ?>
+
 </form>

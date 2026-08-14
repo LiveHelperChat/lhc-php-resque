@@ -51,30 +51,6 @@ class erLhcoreClassExtensionLhcphpresque
         Resque::enqueue($queue, $class, $params);
     }
     
-    public function reloadRedisFailedClasses($classes = array())
-    {
-        if (count($classes) > 0) {
-            $items = erLhcoreClassRedis::instance()->lrange('resque:failed',0, 100);
-            	
-            foreach ($items as $key => $item) {
-                	
-                $jobData = json_decode($item,true);
-                $time = strtotime($jobData['failed_at']);
-                	
-                // Delete older jobs than 7 days
-                if (time() > $time+(7*24*3600)) {
-                    erLhcoreClassRedis::instance()->lrem('resque:failed',1,$item);
-                }
-                	
-                if (isset($jobData['payload']['class']) && in_array($jobData['payload']['class'], $classes))
-                {
-                    $this->enqueue($jobData['queue'], $jobData['payload']['class'], $jobData['payload']['args'][0]);
-                    erLhcoreClassRedis::instance()->lrem('resque:failed',1,$item);
-                }
-            }
-        }
-    }        
-    
     public function autoload($className)
     {
         $classesArray = array(

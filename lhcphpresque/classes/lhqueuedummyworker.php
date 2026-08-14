@@ -24,7 +24,11 @@ class erLhcoreClassLHCDummyWorker {
         $rows = $stmt->fetchAll();
 
         if ($this->args['delay'] != 5) {
+            ezcDbInstance::reset();
             sleep($this->args['delay']);
+        } else {
+            erLhcoreClassModelChatConfig::$disableCache = true;
+            erLhcoreClassModelChatConfig::fetch('elasticsearch_options');
         }
 
         print_r($rows);
@@ -35,6 +39,7 @@ class erLhcoreClassLHCDummyWorker {
         if ($this->args['delay'] == 5) {
             throw new Exception('dummy exception');
         }
+
 
         print_r('TABLES - FOUND - ' . count($rows));
     }

@@ -216,17 +216,66 @@ if (isset($dataOptions['queue_limit_clean']) && !empty($dataOptions['queue_limit
     }
 }
 
-if (isset($dataOptions['queue_limit']) && !empty($dataOptions['queue_limit'])) {
+$isQueueLimitConfigured = isset($dataOptions['queue_limit']) && !empty($dataOptions['queue_limit']);
+$isFailedJobsConfigured = isset($dataOptions['failed_jobs_limit']) && is_numeric($dataOptions['failed_jobs_limit']) && $dataOptions['failed_jobs_limit'] > 0
+    && isset($dataOptions['failed_jobs_timeout']) && is_numeric($dataOptions['failed_jobs_timeout']) && $dataOptions['failed_jobs_timeout'] > 0;
+
+if ($isQueueLimitConfigured || $isFailedJobsConfigured) {
 
     $messages = array();
 
-    foreach ($dataOptions['queue_limit'] as $queue => $queueLimit) {
-        if (isset($dataOptions['queue'][$queue]) && $dataOptions['queue'][$queue] == 1 && is_numeric($queueLimit) && $queueLimit > 0) {
-            $queueLength = erLhcoreClassRedis::instance()->llen('resque:queue:' . $queue);
-            if ($queueLength >= $queueLimit) {
-                $messages[] = $queue.' limit has been reached ' . $queueLength . ' >= '. $queueLimit . ' at ' . date('Y-m-d H:i:s');
+    if ($isQueueLimitConfigured) {
+        foreach ($dataOptions['queue_limit'] as $queue => $queueLimit) {
+            if (isset($dataOptions['queue'][$queue]) && $dataOptions['queue'][$queue] == 1 && is_numeric($queueLimit) && $queueLimit > 0) {
+                $queueLength = erLhcoreClassRedis::instance()->llen('resque:queue:' . $queue);
+                if ($queueLength >= $queueLimit) {
+                    $messages[] = $queue.' limit has been reached ' . $queueLength . ' >= '. $queueLimit . ' at ' . date('Y-m-d H:i:s');
+                    echo $messages[count($messages)-1] . "\n";
+                }
+            }
+        }
+    }
+
+    if ($isFailedJobsConfigured) {
+        try {
+            $redis = erLhcoreClassRedis::instance();
+            $failedJobs = $redis->lrange('resque:failed', 0, -1);
+
+            $failedJobsLimit = (int)$dataOptions['failed_jobs_limit'];
+            $failedJobsTimeout = (int)$dataOptions['failed_jobs_timeout'];
+            $thresholdTime = time() - ($failedJobsTimeout * 60);
+
+            $failedCount = 0;
+            if ($failedJobs !== false) {
+                foreach ($failedJobs as $failedJob) {
+                    $jobData = json_decode($failedJob, true);
+                    if (is_array($jobData) && isset($jobData['failed_at'])) {
+                        $failedAt = strtotime($jobData['failed_at']);
+                        if ($failedAt !== false && $failedAt >= $thresholdTime) {
+                            $failedCount++;
+                        }
+                    }
+                }
+            }
+
+            if ($failedCount > $failedJobsLimit) {
+                $messages[] = 'Failed jobs limit has been reached. ' . $failedCount . ' failed jobs in the last ' . $failedJobsTimeout . ' minutes (limit ' . $failedJobsLimit . ') at ' . date('Y-m-d H:i:s');
                 echo $messages[count($messages)-1] . "\n";
             }
+        } catch (Exception $e) {
+            $messages[] = 'Error checking failed jobs: ' . $e->getMessage();
+            echo $messages[count($messages)-1] . "\n";
+            erLhcoreClassLog::write(
+                'Error in failed jobs monitor: ' . $e->getMessage() . "\n" . $e->getTraceAsString(),
+                ezcLog::ERROR,
+                array(
+                    'source' => 'lhc',
+                    'category' => 'resque_failed_jobs_error',
+                    'line' => __LINE__,
+                    'file' => __FILE__,
+                    'object_id' => 0
+                )
+            );
         }
     }
 

@@ -22,12 +22,17 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
         erLhcoreClassRedis::instance()->del($list);
     }
     
+    if (isset($_POST['rescheduleAll']) && $list == 'resque:failed') {
+        \LiveHelperChatExtension\lhcphpresque\providers\helpers\Rescheduler::rescheduleAllFailed();
+        erLhcoreClassModule::redirect('lhcphpresque/list', '/resque:failed');
+    }
+    
     if (isset($Params['user_parameters_unordered']['reload'])) {
         $classList = array($Params['user_parameters_unordered']['reload']);
     }
     
     if (count($classList) > 0) {
-        erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->reloadRedisFailedClasses($classList);   
+        \LiveHelperChatExtension\lhcphpresque\providers\helpers\Rescheduler::reloadRedisFailedClasses($classList);
         erLhcoreClassModule::redirect('lhcphpresque/list', '/resque:failed'); //redirect to url
     }
     

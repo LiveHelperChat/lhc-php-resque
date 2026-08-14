@@ -35,6 +35,12 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
             'report_email_phpresque' => new ezcInputFormDefinitionElement(
                 ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
             ),
+            'failed_jobs_limit' => new ezcInputFormDefinitionElement(
+                ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1)
+            ),
+            'failed_jobs_timeout' => new ezcInputFormDefinitionElement(
+                ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1)
+            ),
         );
 
         $form = new ezcInputForm(INPUT_POST, $definition);
@@ -66,6 +72,18 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
             $data['report_email_phpresque'] = $form->report_email_phpresque;
         } else {
             $data['report_email_phpresque'] = '';
+        }
+
+        if ($form->hasValidData('failed_jobs_limit')) {
+            $data['failed_jobs_limit'] = $form->failed_jobs_limit;
+        } else {
+            $data['failed_jobs_limit'] = 0;
+        }
+
+        if ($form->hasValidData('failed_jobs_timeout')) {
+            $data['failed_jobs_timeout'] = $form->failed_jobs_timeout;
+        } else {
+            $data['failed_jobs_timeout'] = 0;
         }
 
         $phpresqueOptions->explain = '';
