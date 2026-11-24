@@ -22,7 +22,7 @@ fi
 
 fileLock="/var/www/web/extension/lhcphpresque/doc/runresque.lock"
 
-failedJobs=$(redis-cli -h localhost -p 6379 -n 1 llen resque:failed 2>/dev/null)
+failedJobs=$(cd /var/www/html && /usr/bin/php cron.php -s site_admin -e lhcphpresque -c cron/failed 2>/dev/null)
 failedJobs=${failedJobs:-0}
 
 if [ -f $fileLock ] || ([[ "$failedJobs" =~ ^[0-9]+$ ]] && (( failedJobs > 20 )));
