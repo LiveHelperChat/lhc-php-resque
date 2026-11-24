@@ -48,6 +48,8 @@ if (erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresqu
 
         if ($form->hasValidData('queue')) {
             $data['queue'] = $form->queue;
+        } else {
+            $data['queue'] = [];
         }
 
         if ($form->hasValidData('queue_limit')) {
