@@ -22,11 +22,16 @@ fi
 
 fileLock="/var/www/web/extension/lhcphpresque/doc/runresque.lock"
 
-if [ -f $fileLock ];
+failedJobs=$(redis-cli -h localhost -p 6379 -n 1 llen resque:failed 2>/dev/null)
+failedJobs=${failedJobs:-0}
+
+if [ -f $fileLock ] || ([[ "$failedJobs" =~ ^[0-9]+$ ]] && (( failedJobs > 20 )));
 then
+    echo "Restarting resque..."
     kill -9 $(ps aux | grep -E 'php .*resque\.php$' | awk '{print $2}')
     kill -9 $(ps aux | grep "[0-9] resque-1.2: *" | awk '{print $2}')
     cd /var/www/web/extension/lhcphpresque/doc/ && ./phpresque.sh &
+    cd /var/www/html && /usr/bin/php cron.php -s site_admin -e lhcphpresque -c cron/reschedule
     rm -f $fileLock;
 else
     PIDS=`ps aux | grep '[0-9] resque-1.2: *'`
